@@ -35,12 +35,21 @@ public class Recorder {
         // setup the worksheet
         if (workbook.getSheet(getDetails()) == null) {
             sheet = workbook.createSheet(getDetails());
+            //setup our first row
             sheet.createRow(0);
             Row row = sheet.getRow(0);
             CellStyle style = workbook.createCellStyle();
             Font boldFont = workbook.createFont();
             boldFont.setBold(true);
             style.setFont(boldFont);
+            row.setRowStyle(style);
+            //setup our second row
+            sheet.createRow(1);
+            row = sheet.getRow(1);
+            style = workbook.createCellStyle();
+            Font italicFont = workbook.createFont();
+            italicFont.setItalic(true);
+            style.setFont(italicFont);
             row.setRowStyle(style);
         } else {
             sheet = workbook.getSheet(getDetails());
@@ -60,18 +69,21 @@ public class Recorder {
         if (sheet.getRow(0).getCell(column) == null) {
             sheet.getRow(0).createCell(column).setCellValue(locator);
         }
+        if (sheet.getRow(1).getCell(column) == null) {
+            sheet.getRow(1).createCell(column).setCellFormula("AVERAGE(" + getExcelColumnName(column + 1) + "3:" + getExcelColumnName(column + 1) + "999)");
+        }
     }
 
     public void recordData(long timeTook) {
-        int row = 1;
-        while( true ) {
+        int row = 2;
+        while (true) {
             Row iteratedRow = sheet.getRow(row);
             if (iteratedRow == null || iteratedRow.getCell(column) == null) {
                 break;
             }
             row++;
         }
-        if( sheet.getRow(row) == null) {
+        if (sheet.getRow(row) == null) {
             sheet.createRow(row);
         }
         sheet.getRow(row).createCell(column).setCellValue(timeTook);
@@ -105,5 +117,17 @@ public class Recorder {
             stringBuilder.append(" on ").append(platformName);
         }
         return stringBuilder.toString();
+    }
+
+    String getExcelColumnName(int number) {
+        final StringBuilder sb = new StringBuilder();
+
+        int num = number - 1;
+        while (num >= 0) {
+            int numChar = (num % 26) + 65;
+            sb.append((char) numChar);
+            num = (num / 26) - 1;
+        }
+        return sb.reverse().toString();
     }
 }
