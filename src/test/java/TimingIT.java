@@ -5,8 +5,12 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import utilities.Browser;
+import utilities.Locator;
+import utilities.Recorder;
 
 import java.io.IOException;
+import java.util.List;
 
 import static java.lang.System.currentTimeMillis;
 
@@ -17,7 +21,7 @@ public class TimingIT {
 
     @BeforeMethod
     public void setupSpreadsheet(Object[] dataProvider) throws IOException {
-        Browser browser = new Browser("firefox");
+        Browser browser = new Browser("chrome");
         driver = browser.setupDriver();
         recorder = new Recorder(browser);
         recorder.setupColumn(dataProvider[0].toString());
@@ -30,28 +34,15 @@ public class TimingIT {
     }
 
     @DataProvider(name = "locators", parallel = false)
-    public Object[][] locators() {
-        return new Object[][]{
-                new Object[]{By.id("myAnchorID")},
-                new Object[]{By.name("myAnchorName")},
-                new Object[]{By.className("link")},
-                new Object[]{By.cssSelector("a")},
-                new Object[]{By.cssSelector("a.link")},
-                new Object[]{By.cssSelector("a#myAnchorID")},
-                new Object[]{By.cssSelector("a[name='myAnchorName']")},
-                new Object[]{By.cssSelector("a[href='http://www.coveros.com']")},
-                new Object[]{By.linkText("Coveros Website")},
-                new Object[]{By.partialLinkText("Coveros Website")},
-                new Object[]{By.partialLinkText("Coveros")},
-                new Object[]{By.partialLinkText("Website")},
-                new Object[]{By.partialLinkText("ros Web")},
-                new Object[]{By.tagName("a")},
-                new Object[]{By.xpath("//html/body/a")},
-                new Object[]{By.xpath("//a")},
-                new Object[]{By.xpath("//a[@name='myAnchorName']")},
-                new Object[]{By.xpath("//a[@href='http://www.coveros.com']")},
-                new Object[]{By.xpath("//a[text()='Coveros Website']")},
-        };
+    public Object[][] locators() throws IOException {
+        List<By> locators = Locator.getLocators();
+        Object[][] testData = new Object[locators.size()][];
+        int counter = 0;
+        for (By locator : locators) {
+            testData[counter] = new Object[]{locator};
+            counter++;
+        }
+        return testData;
     }
 
     @Test(dataProvider = "locators")

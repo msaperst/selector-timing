@@ -1,3 +1,5 @@
+package utilities;
+
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
@@ -60,7 +62,7 @@ public class Browser {
      * allows the browser selected to be passed in with a case insensitive name
      *
      * @param b - the string name of the browser
-     * @return Browser: the enum version of the browser
+     * @return utilities.Browser: the enum version of the browser
      */
     public static BrowserName lookup(String b) {
         if ("IE".equalsIgnoreCase(b)) {

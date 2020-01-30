@@ -1,3 +1,5 @@
+package utilities;
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
@@ -13,7 +15,7 @@ import java.util.Iterator;
 
 public class Recorder {
 
-    //Browser Details
+    //utilities.Browser Details
     Browser browser;
     //Recorded Datafile
     File excelOutput = new File("reports.xlsx");
