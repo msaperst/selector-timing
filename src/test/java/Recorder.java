@@ -4,7 +4,6 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,7 +14,7 @@ import java.util.Iterator;
 public class Recorder {
 
     //Browser Details
-    DesiredCapabilities desiredCapabilities;
+    Browser browser;
     //Recorded Datafile
     File excelOutput = new File("reports.xlsx");
     //Workbook
@@ -23,8 +22,8 @@ public class Recorder {
     XSSFSheet sheet;
     int column = 0;
 
-    public Recorder(DesiredCapabilities desiredCapabilities) throws IOException {
-        this.desiredCapabilities = desiredCapabilities;
+    public Recorder(Browser browser) throws IOException {
+        this.browser = browser;
         // setup our excel file
         if (excelOutput.exists()) {
             FileInputStream file = new FileInputStream(excelOutput);
@@ -33,8 +32,8 @@ public class Recorder {
             workbook = new XSSFWorkbook();
         }
         // setup the worksheet
-        if (workbook.getSheet(getDetails()) == null) {
-            sheet = workbook.createSheet(getDetails());
+        if (workbook.getSheet(browser.getDetails()) == null) {
+            sheet = workbook.createSheet(browser.getDetails());
             //setup our first row
             sheet.createRow(0);
             Row row = sheet.getRow(0);
@@ -52,7 +51,7 @@ public class Recorder {
             style.setFont(italicFont);
             row.setRowStyle(style);
         } else {
-            sheet = workbook.getSheet(getDetails());
+            sheet = workbook.getSheet(browser.getDetails());
         }
     }
 
@@ -94,29 +93,6 @@ public class Recorder {
         FileOutputStream out = new FileOutputStream(excelOutput);
         workbook.write(out);
         out.close();
-    }
-
-
-    /**
-     * Retrieves a pretty formatted browser name, including version and platform. If headless or
-     * screensizes are indicated, they are also displayed. If no browser is used, that will be
-     * stated, and platform will be appended
-     *
-     * @return String: the friendly string of the device capabilities
-     */
-    public String getDetails() {
-        StringBuilder stringBuilder = new StringBuilder(desiredCapabilities.getBrowserName());
-        if (desiredCapabilities.getVersion() != null) {
-            stringBuilder.append(" ").append(desiredCapabilities.getVersion());
-        }
-        if (desiredCapabilities.getPlatform() != null) {
-            String platformName = desiredCapabilities.getPlatform().getPartOfOsName()[0];
-            if ("".equals(platformName)) {
-                platformName = desiredCapabilities.getPlatform().toString().toLowerCase();
-            }
-            stringBuilder.append(" on ").append(platformName);
-        }
-        return stringBuilder.toString();
     }
 
     String getExcelColumnName(int number) {

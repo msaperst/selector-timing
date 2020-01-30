@@ -1,9 +1,5 @@
-import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testng.Reporter;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -21,13 +17,9 @@ public class TimingIT {
 
     @BeforeMethod
     public void setupSpreadsheet(Object[] dataProvider) throws IOException {
-        WebDriverManager.chromedriver().forceCache().setup();
-        ChromeOptions options = new ChromeOptions();
-        DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
-        desiredCapabilities.setBrowserName(options.getBrowserName());
-        options.merge(desiredCapabilities);
-        driver = new ChromeDriver(options);
-        recorder = new Recorder(desiredCapabilities);
+        Browser browser = new Browser("firefox");
+        driver = browser.setupDriver();
+        recorder = new Recorder(browser);
         recorder.setupColumn(dataProvider[0].toString());
     }
 
