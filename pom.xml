@@ -18,6 +18,7 @@
         <selenium.version>3.141.59</selenium.version>
         <testng.version>7.1.0</testng.version>
         <webdrivermanager.version>3.7.1</webdrivermanager.version>
+        <apache.poi.version>4.1.1</apache.poi.version>
 
         <!-- Failsafe runtime properties -->
         <failsafe.threads>1</failsafe.threads>
@@ -48,6 +49,16 @@
             <groupId>io.github.bonigarcia</groupId>
             <artifactId>webdrivermanager</artifactId>
             <version>${webdrivermanager.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>${apache.poi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${apache.poi.version}</version>
         </dependency>
     </dependencies>
 

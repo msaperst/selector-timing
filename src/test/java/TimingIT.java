@@ -2,13 +2,42 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testng.Reporter;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import java.io.IOException;
 
 import static java.lang.System.currentTimeMillis;
 
 public class TimingIT {
+
+    Recorder recorder;
+    WebDriver driver;
+
+    @BeforeMethod
+    public void setupSpreadsheet(Object[] dataProvider) throws IOException {
+        WebDriverManager.chromedriver().forceCache().setup();
+        ChromeOptions options = new ChromeOptions();
+        DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
+        desiredCapabilities.setBrowserName(options.getBrowserName());
+        options.merge(desiredCapabilities);
+        driver = new ChromeDriver(options);
+        recorder = new Recorder(desiredCapabilities);
+        recorder.setupColumn(dataProvider[0].toString());
+    }
+
+    @AfterMethod (alwaysRun = true)
+    public void closeOutSpreadsheet(Object[] dataProvider) throws IOException {
+        recorder.writeToSheet();
+        driver.quit();
+    }
 
     @DataProvider(name = "locators", parallel = false)
     public Object[][] locators() {
@@ -36,14 +65,12 @@ public class TimingIT {
     }
 
     @Test(dataProvider = "locators")
-    public void simpleTest(By locator) {
-        WebDriverManager.chromedriver().forceCache().setup();
-        WebDriver driver = new ChromeDriver();
-        driver.get("file:///home/max/workspace/selector-timing/public/index.html");
+    public void simpleTest(By locator) throws IOException {
+        driver.get("file:///" + System.getProperty("user.dir") + "/public/index.html");
         long startTime = currentTimeMillis();
         driver.findElement(locator);
         long stopTime = currentTimeMillis();
         Reporter.log("Took " + (stopTime - startTime) + " milliseconds to locate element");
-        driver.quit();
+        recorder.recordData((stopTime - startTime));
     }
 }
