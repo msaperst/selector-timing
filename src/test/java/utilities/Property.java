@@ -4,6 +4,8 @@ import org.testng.log4testng.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 public class Property {
@@ -33,5 +35,22 @@ public class Property {
             fullProperty = fullProperty.trim();
         }
         return fullProperty;
+    }
+
+    public static List<Browser> getBrowsers() throws IOException {
+        List<Browser> browsers = new ArrayList();
+        int browserCounter = 0;
+        while (true) {
+            String browserName = getProperty("browser" + browserCounter + ".name");
+            String browserVersion = getProperty("browser" + browserCounter + ".version");
+            String browserPlatform = getProperty("browser" + browserCounter + ".platform");
+            if (browserName != null) {
+                browsers.add(new Browser(browserName, browserVersion, browserPlatform));
+            } else {
+                break;
+            }
+            browserCounter++;
+        }
+        return browsers;
     }
 }

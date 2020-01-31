@@ -18,8 +18,6 @@ import org.openqa.selenium.safari.SafariDriver;
 import org.openqa.selenium.safari.SafariOptions;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Browser {
 
@@ -27,34 +25,20 @@ public class Browser {
         FIREFOX, CHROME, INTERNETEXPLORER, EDGE, OPERA, SAFARI
     }
 
-    public static final String NAME_INPUT = "name";
-    public static final String VERSION_INPUT = "version";
-    public static final String PLATFORM_INPUT = "platform";
-
-    private String browserInput;
     private BrowserName name;
     private String version;
     private Platform platform;
     private DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
 
-    public Browser(String browserInput) throws IOException {
-        this.browserInput = browserInput;
-        if (!areBrowserDetailsSet()) {
-            this.name = lookup(browserInput);
-        } else {
-            Map<String, String> browserDetails = parseMap();
-            if (!browserDetails.containsKey(NAME_INPUT)) {
-                throw new IOException("name must be included in browser details");
-            }
-            this.name = lookup(browserDetails.get(NAME_INPUT));
-            if (browserDetails.containsKey(VERSION_INPUT)) {
-                this.version = browserDetails.get(VERSION_INPUT);
-                desiredCapabilities.setVersion(this.version);
-            }
-            if (browserDetails.containsKey(PLATFORM_INPUT)) {
-                this.platform = Platform.fromString(browserDetails.get(PLATFORM_INPUT));
-                desiredCapabilities.setPlatform(this.platform);
-            }
+    public Browser(String name, String version, String platform) throws IOException {
+        this.name = lookup(name);
+        if (version != null) {
+            this.version = version;
+            desiredCapabilities.setVersion(this.version);
+        }
+        if (platform != null) {
+            this.platform = Platform.fromString(platform);
+            desiredCapabilities.setPlatform(this.platform);
         }
     }
 
@@ -64,7 +48,7 @@ public class Browser {
      * @param b - the string name of the browser
      * @return utilities.Browser: the enum version of the browser
      */
-    public static BrowserName lookup(String b) {
+    public static BrowserName lookup(String b) throws IOException {
         if ("IE".equalsIgnoreCase(b)) {
             return BrowserName.INTERNETEXPLORER;
         }
@@ -73,7 +57,7 @@ public class Browser {
                 return browser;
             }
         }
-        return BrowserName.CHROME;
+        throw new IOException("Browser name doesn't map to any supported browser");
     }
 
     /**
@@ -121,33 +105,6 @@ public class Browser {
                 break;
         }
         return driver;
-    }
-
-    /**
-     * determines if the browser information provided has details, or just the
-     * browser name
-     *
-     * @return Boolean: are there details associated with the browser, such as
-     * version, os, etc
-     */
-    private boolean areBrowserDetailsSet() {
-        return browserInput != null && !browserInput.matches("^[a-zA-Z,]+$");
-    }
-
-    /**
-     * Breaks up a string, and places it into a map. ampersands (&) are used to
-     * split into key value pairs, while equals (=) are used to assign key vs
-     * values
-     *
-     * @return Map: a map with values
-     */
-    private Map<String, String> parseMap() {
-        final Map<String, String> map = new HashMap();
-        for (String pair : browserInput.split("&")) {
-            String[] kv = pair.split("=");
-            map.put(kv[0], kv[1]);
-        }
-        return map;
     }
 
     /**
