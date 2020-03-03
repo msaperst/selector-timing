@@ -14,10 +14,17 @@ import org.openqa.selenium.ie.InternetExplorerOptions;
 import org.openqa.selenium.opera.OperaDriver;
 import org.openqa.selenium.opera.OperaOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.safari.SafariDriver;
 import org.openqa.selenium.safari.SafariOptions;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
 
 public class Browser {
 
@@ -32,6 +39,7 @@ public class Browser {
 
     public Browser(String name, String version, String platform) throws IOException {
         this.name = lookup(name);
+        desiredCapabilities.setBrowserName(this.name.toString().toLowerCase());
         if (version != null) {
             this.version = version;
             desiredCapabilities.setVersion(this.version);
@@ -60,13 +68,26 @@ public class Browser {
         throw new IOException("Browser name doesn't map to any supported browser");
     }
 
+    public WebDriver setupDriver(String buildName, String locator) throws MalformedURLException {
+        WebDriver driver;
+        if (Property.getProperty("hub") != null) {
+            desiredCapabilities.setCapability("name", locator + " on " + getDetails());
+            desiredCapabilities.setCapability("tags", Arrays.asList(locator));
+            desiredCapabilities.setCapability("build", buildName);
+            driver = new RemoteWebDriver(new URL(Property.getProperty("hub")), this.desiredCapabilities);
+        } else {
+            driver = setupLocalDriver();
+        }
+        return driver;
+    }
+
     /**
      * this creates the webdriver object, which will be used to interact with
      * for all browser web tests
      *
      * @return WebDriver: the driver to interact with for the test
      */
-    public WebDriver setupDriver() {
+    public WebDriver setupLocalDriver() {
         WebDriver driver;
         // check the browser
         switch (name) {

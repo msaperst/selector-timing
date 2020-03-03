@@ -20,7 +20,7 @@ public class Property {
      * @param property - what property value to return
      * @return String: the property value, null if unset
      */
-    protected static String getProperty(String property) {
+    public static String getProperty(String property) {
         if (System.getProperty(property) != null) {
             return System.getProperty(property).trim();
         }

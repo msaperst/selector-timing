@@ -11,6 +11,9 @@ import utilities.Property;
 import utilities.Recorder;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import static java.lang.System.currentTimeMillis;
@@ -19,11 +22,15 @@ public class TimingIT {
 
     Recorder recorder;
     WebDriver driver;
+    String site = "file:///" + System.getProperty("user.dir") + "/public/index.html";
+
+    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+    Date now = new Date();
 
     @BeforeMethod
     public void setupSpreadsheet(Object[] dataProvider) throws IOException {
         Browser browser = (Browser) dataProvider[0];
-        driver = browser.setupDriver();
+        driver = browser.setupDriver(dateFormat.format(now) + " Timing Run", dataProvider[1].toString());
         recorder = new Recorder(browser);
         recorder.setupColumn(dataProvider[1].toString());
     }
@@ -50,8 +57,9 @@ public class TimingIT {
     }
 
     @Test(dataProvider = "locators")
-    public void simpleTest(Browser browser, By locator) throws IOException {
-        driver.get("file:///" + System.getProperty("user.dir") + "/public/index.html");
+    public void simpleTest(Browser browser, By locator) {
+        String testSite = Property.getProperty("site") != null ? Property.getProperty("site") : site;
+        driver.get(testSite);
         long startTime = currentTimeMillis();
         driver.findElement(locator);
         long stopTime = currentTimeMillis();
