@@ -38,6 +38,9 @@ public class Property {
     }
 
     public static List<Browser> getBrowsers() throws IOException {
+        if ("all-sauce".equals(getProperty("browser0.name")) && getProperty("hub") != null) {
+            return Sauce.allBrowsers();
+        }
         List<Browser> browsers = new ArrayList();
         int browserCounter = 0;
         while (true) {

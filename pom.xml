@@ -20,6 +20,8 @@
         <testng.version>7.1.0</testng.version>
         <webdrivermanager.version>3.7.1</webdrivermanager.version>
         <apache.poi.version>4.1.1</apache.poi.version>
+        <http.client.commponent.version>4.5.12</http.client.commponent.version>
+        <google.code.gson.version>2.8.6</google.code.gson.version>
 
         <!-- Failsafe runtime properties -->
         <failsafe.threads>1</failsafe.threads>
@@ -60,6 +62,17 @@
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
             <version>${apache.poi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${http.client.commponent.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>${google.code.gson.version}</version>
         </dependency>
     </dependencies>
 

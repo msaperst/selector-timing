@@ -21,10 +21,7 @@ import org.openqa.selenium.safari.SafariOptions;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
+import java.util.Collections;
 
 public class Browser {
 
@@ -35,18 +32,18 @@ public class Browser {
     private BrowserName name;
     private String version;
     private Platform platform;
-    private DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
+    private DesiredCapabilities desiredCapabilities;
 
     public Browser(String name, String version, String platform) throws IOException {
         this.name = lookup(name);
-        desiredCapabilities.setBrowserName(this.name.toString().toLowerCase());
+        setupDesiredCapabilities();
         if (version != null) {
             this.version = version;
-            desiredCapabilities.setVersion(this.version);
+            this.desiredCapabilities.setVersion(this.version);
         }
         if (platform != null) {
             this.platform = Platform.fromString(platform);
-            desiredCapabilities.setPlatform(this.platform);
+            this.desiredCapabilities.setPlatform(this.platform);
         }
     }
 
@@ -60,6 +57,9 @@ public class Browser {
         if ("IE".equalsIgnoreCase(b)) {
             return BrowserName.INTERNETEXPLORER;
         }
+        if ("MS Edge".equalsIgnoreCase(b)) {
+            return BrowserName.EDGE;
+        }
         for (BrowserName browser : BrowserName.values()) {
             if (browser.name().equalsIgnoreCase(b)) {
                 return browser;
@@ -72,13 +72,37 @@ public class Browser {
         WebDriver driver;
         if (Property.getProperty("hub") != null) {
             desiredCapabilities.setCapability("name", locator + " on " + getDetails());
-            desiredCapabilities.setCapability("tags", Arrays.asList(locator));
+            desiredCapabilities.setCapability("tags", Collections.singletonList(locator));
             desiredCapabilities.setCapability("build", buildName);
             driver = new RemoteWebDriver(new URL(Property.getProperty("hub")), this.desiredCapabilities);
         } else {
             driver = setupLocalDriver();
         }
         return driver;
+    }
+
+    public void setupDesiredCapabilities() {
+        switch (name) {
+            case FIREFOX:
+                desiredCapabilities = DesiredCapabilities.firefox();
+                break;
+            case INTERNETEXPLORER:
+                desiredCapabilities = DesiredCapabilities.internetExplorer();
+                break;
+            case EDGE:
+                desiredCapabilities = DesiredCapabilities.edge();
+                break;
+            case SAFARI:
+                desiredCapabilities = DesiredCapabilities.safari();
+                break;
+            case OPERA:
+                desiredCapabilities = DesiredCapabilities.operaBlink();
+                break;
+            case CHROME:
+            default:
+                desiredCapabilities = DesiredCapabilities.chrome();
+                break;
+        }
     }
 
     /**
@@ -94,6 +118,7 @@ public class Browser {
             case FIREFOX:
                 WebDriverManager.firefoxdriver().forceCache().setup();
                 FirefoxOptions firefoxOptions = new FirefoxOptions(desiredCapabilities);
+                firefoxOptions.setHeadless(true);
                 driver = new FirefoxDriver(firefoxOptions);
                 break;
             case INTERNETEXPLORER:
@@ -122,6 +147,7 @@ public class Browser {
                 WebDriverManager.chromedriver().forceCache().setup();
                 ChromeOptions chromeOptions = new ChromeOptions();
                 chromeOptions = chromeOptions.merge(desiredCapabilities);
+                chromeOptions.setHeadless(true);
                 driver = new ChromeDriver(chromeOptions);
                 break;
         }
