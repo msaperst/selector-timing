@@ -17,7 +17,7 @@
 
         <!-- General Selenium dependency versions -->
         <selenium.version>3.141.59</selenium.version>
-        <testng.version>7.1.0</testng.version>
+        <testng.version>7.4.0</testng.version>
         <webdrivermanager.version>3.7.1</webdrivermanager.version>
         <apache.poi.version>4.1.1</apache.poi.version>
         <http.client.commponent.version>4.5.12</http.client.commponent.version>
