@@ -21,7 +21,7 @@
         <webdrivermanager.version>3.7.1</webdrivermanager.version>
         <apache.poi.version>4.1.1</apache.poi.version>
         <http.client.commponent.version>4.5.12</http.client.commponent.version>
-        <google.code.gson.version>2.8.6</google.code.gson.version>
+        <google.code.gson.version>2.8.9</google.code.gson.version>
 
         <!-- Failsafe runtime properties -->
         <failsafe.threads>1</failsafe.threads>
